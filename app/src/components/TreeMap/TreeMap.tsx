@@ -125,8 +125,6 @@ class TreeMap extends React.Component<ITreeMapProps, ITreeMapState> {
         //remove first element from the array as this is some kind of header and we do not need it
         reactNodes.shift();
 
-        const reactNodesAggregated = this._aggregateSmall(reactNodes, 10000);
-
         const highestBgColor = this._nodesbgColorFunction(totalNodes);
         const lowestBgColor = this._nodesbgColorFunction(1);
         return (
@@ -144,82 +142,12 @@ class TreeMap extends React.Component<ITreeMapProps, ITreeMapState> {
                 >
                     <rect className="svg-group-wrapper"  height={height} width={width}>
                     </rect>
-                    {reactNodesAggregated}
+                    {reactNodes}
                 </svg>
                 {/*<div>Total items: {this.state.selectedNodeTotalNodes}  / {this.state.totalNodes}</div>*/}
             </div>
 
         );
-    }
-
-
-    private _aggregateSmall( arr: Array<any>, threshold: number) {
-        const { fontSize } = this.state;
-
-        const aggegated = {};
-        const xArr = [];
-        const yArr = [];
-        let aggrValue = 0;
-
-        const filtered = arr.filter( obj => {
-            const { x0, x1, y0, y1, value} = obj.props;
-
-            const tooSmall = (x0 - x1) * (y0 - y1) < threshold;
-
-            if (tooSmall) {
-                xArr.push(x0);
-                xArr.push(x1);
-                yArr.push(y0);
-                yArr.push(y1);
-                aggrValue += value;
-            }
-            return tooSmall ? false : true;
-        });
-
-        const xSorted = xArr.sort((a, b) => a > b);
-        const ySorted = yArr.sort((a, b) => a > b);
-
-        const x0 = xSorted[0];
-        const x1 = xSorted[xSorted.length - 1];
-        const y0 = ySorted[0];
-        const y1 = ySorted[ySorted.length - 1];
-
-        const translate = `translate(${x0}, ${y0})`;
-        const id = filtered.length + 1;
-        const width = x1 - x0;
-        const height = y1 - y0;
-
-        const aggrNode =
-            <g
-                key="aggrNode"
-                transform={translate}>
-                <rect
-                    id={"rect-" + id}
-                    width={width}
-                    height={height}
-                />
-                 <text y="10">
-                    <tspan
-                        className='segment-name'
-                        fontSize={fontSize}
-                        x="10"
-                        dy={fontSize}
-                        >
-                       Others
-                    </tspan>
-                    <tspan
-                        className='segment-value'
-                        fontSize={fontSize + 2}
-                        x={10}
-                        dy={fontSize + 5}>
-                       {aggrValue}
-                    </tspan>
-                </text>
-            </g>;
-
-        filtered.push(aggrNode);
-
-        return filtered;
     }
 
     private _createD3TreeMap(width: number, height: number) {
