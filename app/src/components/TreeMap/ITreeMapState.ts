@@ -1,5 +1,7 @@
 import { HierarchyRectangularNode } from "d3-hierarchy";
 export interface ITreeMapState {
+    showTooltip: boolean,
+    fontSize: number,
     scopedNodes: HierarchyRectangularNode<{}>[];
     width: number;
     height: number;

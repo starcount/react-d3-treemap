@@ -2,6 +2,8 @@
 import * as React from "react";
 import { INodeProps } from "./INodeProps";
 declare class Node extends React.Component<INodeProps, {}> {
+    constructor(props: any);
+    toggleTooltip(onEnter: any): void;
     render(): JSX.Element;
     private _getNestedFolderTypeNode();
     private _getNumberItemsHeightByFontSize(fontSize);

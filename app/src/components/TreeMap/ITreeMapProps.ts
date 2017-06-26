@@ -3,6 +3,8 @@ export interface ITreeMapProps {
     height: number;
     data: any;
 
+    tooltip: any;
+
     /*
         Unit for values. For example MB
     */

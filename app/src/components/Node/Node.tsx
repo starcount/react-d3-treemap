@@ -1,5 +1,4 @@
 import * as React from "react";
-
 /* tslint:disable:no-var-requires */
 const styles: any = require("./Node.module.css");
 /* tslint:enable:no-var-requires */
@@ -8,6 +7,27 @@ const styles: any = require("./Node.module.css");
 import { INodeProps } from "./INodeProps";
 
 class Node extends React.Component<INodeProps, {}> {
+
+    public constructor(props) {
+        super(props);
+        this._hoverContainer = null;
+    }
+
+     public toggleTooltip( onEnter ) {
+        const { label, valueWithFormat, fontSize } = this.props;
+        const containerParams = this._hoverContainer.getBoundingClientRect();
+        
+        if (onEnter) {
+             this.props.showTooltipCallback({
+                text: label,
+                value: valueWithFormat,
+                position: containerParams,
+                styles: { fontSize }
+             });
+        } else {
+            this.props.showTooltipCallback(null);
+        }    
+    }
 
     public render() {
         return this._getNestedFolderTypeNode();
@@ -33,6 +53,7 @@ class Node extends React.Component<INodeProps, {}> {
             nodeTotalNodes,
             globalTotalNodes
         } = this.props;
+
         const cursor = hasChildren === true && isSelectedNode === false ? "pointer" : "auto";
         const itemsWidth = this._getNumberItemsWidthByNumberOfChars(fontSize, nodeTotalNodes.toString().length);
         const clipWidth = width > itemsWidth ? width - itemsWidth : width;
@@ -40,7 +61,7 @@ class Node extends React.Component<INodeProps, {}> {
         const widthThreshold = 100;
         const heightThreshold = 50;
 
-        const hideText = width < widthThreshold || height < heightThreshold;
+        const showText = width > widthThreshold && height > heightThreshold;
 
         return (
             <g
@@ -52,6 +73,9 @@ class Node extends React.Component<INodeProps, {}> {
                 style={{ cursor }}
             >
                 <rect
+                    onMouseEnter={() => showText ? null : this.toggleTooltip(true)}
+                    onMouseLeave={() => showText ? null : this.toggleTooltip(false)}
+                    ref={ref => (this._hoverContainer = ref)}
                     id={"rect-" + id}
                     width={width}
                     height={height}
@@ -65,14 +89,12 @@ class Node extends React.Component<INodeProps, {}> {
                         height={height}
                     />
                 </clipPath>
-                <text className={hideText ? "hidden" : "visible"}
-                    clipPath={"url(#clip-" + id + ")"}
-                    y="10"
-                >
-                    {this._getLabelNewLine()}
-                </text>
-                {this._getNumberOfItemsRect()}
-                <title>{label + "\n" + valueWithFormat + " " + valueUnit + "\n" + nodeTotalNodes + "/" + globalTotalNodes}</title>
+               {showText && <text
+                   clipPath={"url(#clip-" + id + ")"}
+                   y="10"
+               >
+                   {this._getLabelNewLine()}
+               </text>}
             </g>
         );
     }
