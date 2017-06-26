@@ -36,6 +36,12 @@ class Node extends React.Component<INodeProps, {}> {
         const cursor = hasChildren === true && isSelectedNode === false ? "pointer" : "auto";
         const itemsWidth = this._getNumberItemsWidthByNumberOfChars(fontSize, nodeTotalNodes.toString().length);
         const clipWidth = width > itemsWidth ? width - itemsWidth : width;
+
+        const widthThreshold = 100;
+        const heightThreshold = 50;
+
+        const hideText = width < widthThreshold || height < heightThreshold;
+
         return (
             <g
                 transform={`translate(${xTranslated},${yTranslated})`}
@@ -59,7 +65,7 @@ class Node extends React.Component<INodeProps, {}> {
                         height={height}
                     />
                 </clipPath>
-                <text
+                <text className={hideText ? "hidden" : "visible"}
                     clipPath={"url(#clip-" + id + ")"}
                     y="10"
                 >
