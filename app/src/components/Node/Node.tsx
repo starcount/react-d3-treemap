@@ -39,6 +39,7 @@ class Node extends React.Component<INodeProps, {}> {
             onClick,
             name,
             id,
+            segmentId,
             label,
             valueWithFormat,
             valueUnit,
@@ -69,7 +70,7 @@ class Node extends React.Component<INodeProps, {}> {
                 // ref={id}
                 className={styles.node + " " + (nodeTotalNodes === globalTotalNodes ? styles.rootNode : null)}
                 id={id.toString()}
-                onClick={hasChildren ? onClick : null}
+                onClick={() => onClick(segmentId)}
                 style={{ cursor }}
             >
                 <rect

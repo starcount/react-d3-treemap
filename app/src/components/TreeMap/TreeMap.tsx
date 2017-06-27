@@ -88,7 +88,7 @@ class TreeMap extends React.Component<ITreeMapProps, ITreeMapState> {
             selectedNodeTotalNodes: this._nodes.length
         };
 
-        this.tooltip = {};
+        this.tooltip = null;
     }
 
     public componentWillReceiveProps(nextProps: ITreeMapProps) {
@@ -247,12 +247,13 @@ class TreeMap extends React.Component<ITreeMapProps, ITreeMapState> {
     }
 
     private _getNode(node: HierarchyRectangularNode<{}>) {
-        const { valueFormat } = this.props;
+        const { valueFormat, callback } = this.props;
         const { width, height, totalNodes, fontSize } = this.state;
 
 
         const name = (node as any).data.name;
         const id = (node as any).customId;
+        const segmentId = node.data.segmentId;
         const hasChildren = node.children && node.children.length > 0 ? true : false;
         const valueWithFormat = this._valueFormatFunction(node.value);
         const nodeTotalNodes = node.descendants().length;
@@ -271,6 +272,7 @@ class TreeMap extends React.Component<ITreeMapProps, ITreeMapState> {
             <NodeContainer
                 {...node}
                 id={id}
+                segmentId={segmentId}
                 xScaleFactor={this.state.xScaleFactor}
                 yScaleFactor={this.state.yScaleFactor}
                 xScaleFunction={this.state.xScaleFunction}
@@ -301,8 +303,9 @@ class TreeMap extends React.Component<ITreeMapProps, ITreeMapState> {
         this._zoomTo(item.key);
     }
 
-    private _onNodeClick = (ev: React.MouseEvent<HTMLElement>) => {
-        this._zoomTo(ev.currentTarget.id);
+    private _onNodeClick = (id: number ) => {
+        const { addSegment } = this.props;
+        addSegment(id);
     }
 
     private _zoomTo(nodeId: string) {
