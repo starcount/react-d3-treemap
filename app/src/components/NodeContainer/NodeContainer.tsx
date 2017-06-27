@@ -42,7 +42,8 @@ class NodeContainer extends React.Component<INodeContainerProps, INodeContainerS
             zoomEnabled,
             onClick,
             isSelectedNode,
-            nodeTotalNodes
+            nodeTotalNodes,
+            showTooltipCallback
         } = this.props;
         // if (id === "util") {debugger;}
         const xTranslated = zoomEnabled === true ? xScaleFunction(x0) : x0;
@@ -56,6 +57,7 @@ class NodeContainer extends React.Component<INodeContainerProps, INodeContainerS
                 yTranslated={yTranslated}
                 height={height}
                 width={width}
+                showTooltipCallback={showTooltipCallback}
             />
 
         );

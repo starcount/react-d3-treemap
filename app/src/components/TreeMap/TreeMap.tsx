@@ -44,7 +44,8 @@ class TreeMap extends React.Component<ITreeMapProps, ITreeMapState> {
         height: 600,
         width: 600,
         valueFormat: ",d",
-        valueUnit: "MB"
+        valueUnit: "MB",
+        tooltip: null
     };
 
 
@@ -69,6 +70,7 @@ class TreeMap extends React.Component<ITreeMapProps, ITreeMapState> {
 
         // Default State values
         this.state = {
+            showTooltip: false,
             fontSize: 15,
             height: this.props.height,
             width: this.props.width,
@@ -86,6 +88,7 @@ class TreeMap extends React.Component<ITreeMapProps, ITreeMapState> {
             selectedNodeTotalNodes: this._nodes.length
         };
 
+        this.tooltip = {};
     }
 
     public componentWillReceiveProps(nextProps: ITreeMapProps) {
@@ -99,6 +102,44 @@ class TreeMap extends React.Component<ITreeMapProps, ITreeMapState> {
                 yScaleFunction: scaleLinear().range([0, nextProps.height])
             });
         }
+    }
+
+    public showTooltip(tooltip) {
+        this.tooltip = tooltip;
+        this.setState({
+            showTooltip: tooltip ? true : false
+        });
+    }
+
+    public renderTooltip() {
+        const { text, value, position: { top, left}, styles: {fontSize}} = this.tooltip;
+        const styles = {
+            position: 'fixed',
+            top,
+            left,
+            fontSize
+        };
+        return (
+            <div style={styles}
+                className="treeMap-tooltip"
+            >
+                {text.split(' ').map((word, idx) => 
+                    <span
+                        key={idx}
+                        className="tooltip-word">{word}{' '}
+                    </span>)
+                }  
+                <span
+                    className="tooltip-value"
+                    style={{
+                        fontSize: fontSize + 2,
+                        paddingTop: 5
+                    }}
+                >
+                    {value}
+                </span>
+            </div>
+        )
     }
 
     public render() {
@@ -144,6 +185,7 @@ class TreeMap extends React.Component<ITreeMapProps, ITreeMapState> {
                     </rect>
                     {reactNodes}
                 </svg>
+                {this.state.showTooltip && this.renderTooltip()}
                 {/*<div>Total items: {this.state.selectedNodeTotalNodes}  / {this.state.totalNodes}</div>*/}
             </div>
 
@@ -250,6 +292,7 @@ class TreeMap extends React.Component<ITreeMapProps, ITreeMapState> {
                 globalTotalNodes={totalNodes}
                 isSelectedNode={id === this.state.selectedId}
                 valueUnit={this.props.valueUnit}
+                showTooltipCallback={this.showTooltip.bind(this)}
             />
         );
     }
