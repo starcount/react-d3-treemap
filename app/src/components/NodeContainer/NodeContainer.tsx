@@ -29,6 +29,7 @@ class NodeContainer extends React.Component<INodeContainerProps, INodeContainerS
             bgColor,
             name,
             id,
+            segmentId,
             label,
             textColor,
             valueWithFormat,
