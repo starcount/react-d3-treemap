@@ -78,6 +78,7 @@ class Node extends React.Component<INodeProps, {}> {
                     onMouseLeave={() => showText ? null : this.toggleTooltip(false)}
                     ref={ref => (this._hoverContainer = ref)}
                     id={"rect-" + id}
+                    className={'fill-color-' + (id < 10 ? id : 'rest')}
                     width={width}
                     height={height}
                     fill={bgColor}

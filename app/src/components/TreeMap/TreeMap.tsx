@@ -62,7 +62,6 @@ class TreeMap extends React.Component<ITreeMapProps, ITreeMapState> {
     // Background Color function
     private _nodesbgColorFunction: (t: number) => string;
 
-
     constructor(props: ITreeMapProps, context: any) {
         super(props, context);
 
@@ -89,7 +88,12 @@ class TreeMap extends React.Component<ITreeMapProps, ITreeMapState> {
         };
 
         this.tooltip = null;
+        this.scrollHandler = this._handleScrolling.bind(this);
     }
+    public componentDidMount() {
+        window.addEventListener("scroll", this.scrollHandler, true);
+    }
+
 
     public componentWillReceiveProps(nextProps: ITreeMapProps) {
         if (nextProps.height !== this.props.height
@@ -102,6 +106,10 @@ class TreeMap extends React.Component<ITreeMapProps, ITreeMapState> {
                 yScaleFunction: scaleLinear().range([0, nextProps.height])
             });
         }
+    }
+
+    public componentWillUnmount() {
+       window.removeEventListener("scroll", this.scrollHandler, true);
     }
 
     public showTooltip(tooltip) {
@@ -190,6 +198,10 @@ class TreeMap extends React.Component<ITreeMapProps, ITreeMapState> {
             </div>
 
         );
+    }
+
+    private _handleScrolling() {
+        return this.state.showTooltip ? this.setState({ showTooltip: false }) : null;
     }
 
     private _createD3TreeMap(width: number, height: number) {
